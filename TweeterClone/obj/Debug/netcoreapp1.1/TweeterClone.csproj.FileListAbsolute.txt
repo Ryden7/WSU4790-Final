@@ -1,0 +1,5 @@
+C:\Users\Rizwan\documents\visual studio 2017\Projects\TweeterClone\TweeterClone\bin\Debug\netcoreapp1.1\TweeterClone.deps.json
+C:\Users\Rizwan\documents\visual studio 2017\Projects\TweeterClone\TweeterClone\bin\Debug\netcoreapp1.1\TweeterClone.runtimeconfig.json
+C:\Users\Rizwan\documents\visual studio 2017\Projects\TweeterClone\TweeterClone\bin\Debug\netcoreapp1.1\TweeterClone.runtimeconfig.dev.json
+C:\Users\Rizwan\documents\visual studio 2017\Projects\TweeterClone\TweeterClone\obj\Debug\netcoreapp1.1\TweeterClone.csprojResolveAssemblyReference.cache
+C:\Users\Rizwan\documents\visual studio 2017\Projects\TweeterClone\TweeterClone\obj\Debug\netcoreapp1.1\TweeterClone.AssemblyInfo.cs
