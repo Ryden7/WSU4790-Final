@@ -13,7 +13,6 @@ namespace TweeterClone
     {
         public static void Main(string[] args)
         {
-            TweeterMem tm = new TweeterMem();
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())

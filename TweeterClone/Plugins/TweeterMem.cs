@@ -8,10 +8,11 @@ namespace TweeterClone.Plugins
 {
     public static class TweeterMem
     {
+
         private static int count;
-        private static List<CoreTweet> allTweets;
+        private static List<CoreTweet> allTweets = new List<CoreTweet>();
         
-        private static Dictionary<String, List<CoreTweet>> user2Tweet;
+        private static Dictionary<String, List<CoreTweet>> user2Tweet = new Dictionary<string, List<CoreTweet>>();
 
         public static bool Add(String username, CoreTweet n)
         {
@@ -31,15 +32,6 @@ namespace TweeterClone.Plugins
                 
             }
 
-            else
-            {
-                List<CoreTweet> userTweets = new List<CoreTweet>();
-                userTweets.Add(n);
-                user2Tweet.Add(username, userTweets);
-                return true;
-
-            }
-
             return false;
         }
 
@@ -57,11 +49,26 @@ namespace TweeterClone.Plugins
             return false;
         }
 
-        private static List<CoreTweet> getListofTweets(String username)
+        public static List<CoreTweet> getListofTweets(String username)
         {
-            List<CoreTweet> templist;
+            List<CoreTweet> templist = new List<CoreTweet>();
             user2Tweet.TryGetValue(username, out templist);
             return templist;
+        }
+
+        public static CoreUser Register(String username, String Password, String email)
+        {
+            if (!doesUserExist(username))
+            {
+                CoreUser user = new CoreUser(username, Password, email);
+                
+                List<CoreTweet> list = new List<CoreTweet>();
+                user2Tweet.Add(username, list);
+                return user;
+            }
+
+            return null;
+
         }
 
 

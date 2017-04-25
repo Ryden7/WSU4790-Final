@@ -11,15 +11,23 @@ namespace TweeterClone.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        [Route("/")]
+       public IActionResult Index()
+        {
+            return Ok("I am Groot");
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<CoreTweet> GetAllTweets(String username)
         {
-            
+           return TweeterMem.getListofTweets(username);
+            /*
             return new List<CoreTweet>{
                 new CoreTweet{Message="This is a tweet"},
                 new CoreTweet{Message="This is another tweet"}
              };
+             */
             
         }
 
