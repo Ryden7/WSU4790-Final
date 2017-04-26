@@ -12,12 +12,14 @@ namespace TweeterClone.Controllers
 {
     public class CoreUsersController : Controller
     {
-        private readonly TweeterDb _context;
+        private readonly TweeterContext _context;
 
-        public CoreUsersController(TweeterDb context)
+        public CoreUsersController(TweeterContext context)
         {
             _context = context;    
         }
+
+
 
         // GET: CoreUsers
         public async Task<IActionResult> Index()

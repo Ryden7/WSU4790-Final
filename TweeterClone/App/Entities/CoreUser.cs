@@ -13,12 +13,14 @@ namespace TweeterClone.App.Entities
         private string Password { get; set; }
         private string Email { get; set; }
 
+        
         public CoreUser(String username, String Password, string Email)
         {
             this.Username = username;
             this.Password = Password;
             this.Email = Email;
         }
+        
 
     }
 

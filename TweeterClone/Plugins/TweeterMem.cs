@@ -3,75 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TweeterClone.App.Entities;
+using TweeterClone.Plugins;
 
-namespace TweeterClone.Plugins
+namespace TweeterClone.Plugin
 {
-    public static class TweeterMem
+    public class TweeterMem
     {
+        private readonly TweeterContext _context;
 
-        private static int count;
-        private static List<CoreTweet> allTweets = new List<CoreTweet>();
+        public TweeterMem(TweeterContext context)
+        {
+            _context = context;
+
+           // if (_context.Users.Count() == 0)
+             //   Register(new CoreUser { Username = "test"});
+        }
+
+        public void Register(CoreUser user)
+        {
+            _context.Add(user);
+            _context.SaveChanges();
+        }
+
+        /*
+        public CoreTweet Edit(int id, String message)
+        {
+            _context.Tweets.Update(tweet);
+            _context.SaveChanges();
+        }
+        */
         
-        private static Dictionary<String, List<CoreTweet>> user2Tweet = new Dictionary<string, List<CoreTweet>>();
 
-        public static bool Add(String username, CoreTweet n)
+        public CoreTweet Find(int id)
         {
-            List<CoreTweet> tempList;
-            int count = allTweets.FindIndex(x => x.ID == n.ID);
-            if (count != -1)
-            {
-                return false;
-            }
-
-            if (doesUserExist(username))
-            {
-                allTweets.Add(n);
-                user2Tweet.TryGetValue(username, out tempList);
-                tempList.Add(n);
-                return true;
-                
-            }
-
-            return false;
-        }
-
-        // The number of elements removed from the Notes list
-        public static int DeleteByID(int ID)
-        {
-            return allTweets.RemoveAll(x => x.ID == ID);
-        }
-
-        private static bool doesUserExist(String username)
-        {
-            if (user2Tweet.ContainsKey(username))
-                return true;
-            
-            return false;
-        }
-
-        public static List<CoreTweet> getListofTweets(String username)
-        {
-            List<CoreTweet> templist = new List<CoreTweet>();
-            user2Tweet.TryGetValue(username, out templist);
-            return templist;
-        }
-
-        public static CoreUser Register(String username, String Password, String email)
-        {
-            if (!doesUserExist(username))
-            {
-                CoreUser user = new CoreUser(username, Password, email);
-                
-                List<CoreTweet> list = new List<CoreTweet>();
-                user2Tweet.Add(username, list);
-                return user;
-            }
-
-            return null;
+            return _context.Tweets.FirstOrDefault(t => t.ID == id);
 
         }
 
+        public IEnumerable<CoreTweet> getAllTweets()
+        {
+            throw new NotImplementedException();
+        }
 
+        public void Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
-

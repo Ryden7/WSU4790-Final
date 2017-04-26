@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TweeterClone.Plugins;
+using TweeterClone.Plugin;
 
 namespace TweeterClone
 {
@@ -30,20 +31,28 @@ namespace TweeterClone
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<TweeterDb>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //  services.AddDbContext<TweeterContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<TweeterContext>(opt => opt.UseInMemoryDatabase());
+
             services.AddMvc();
-           // services.Add(new ServiceDescriptor(typeof(TweeterDb), new TweeterDb(Configuration.GetConnectionString("DefaultConnection"))));
+
+          //  services.AddScoped<ITweeterMem, TweeterMem>();
+
+            // services.Add(new ServiceDescriptor(typeof(TweeterDb), new TweeterDb(Configuration.GetConnectionString("DefaultConnection"))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TweeterDb context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TweeterContext context)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=CoreUser}/{action=Index}/{id?}");
+            });
 
-            Dbinitializer.Initialize(context);
+          //  Dbinitializer.Initialize(context);
         }
     }
 }
