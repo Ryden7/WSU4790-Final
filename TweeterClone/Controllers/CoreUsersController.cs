@@ -7,149 +7,124 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TweeterClone.App.Entities;
 using TweeterClone.Plugins;
+using TweeterClone.Plugin;
+using TweeterClone.App.Models;
 
 namespace TweeterClone.Controllers
 {
+    [Route("/[controller]")]
     public class CoreUsersController : Controller
     {
-        private readonly TweeterContext _context;
+        private readonly ITweeterMem _tweeterRepo;
 
-        public CoreUsersController(TweeterContext context)
+        public CoreUsersController(ITweeterMem tweeterRepo)
         {
-            _context = context;    
+            _tweeterRepo = tweeterRepo;    
         }
 
-
+        [HttpGet("/CoreUsers/")]
+        public IEnumerable<CoreTweet> getAll()
+        {
+            return _tweeterRepo.getAllTweets();
+        }
+        // GET: CoreTweet
+        [HttpGet("/CoreUsers/{id}", Name = "GetTweet")]
+        public CoreTweet Get(int id)
+        {
+            return _tweeterRepo.FindTweet(id);
+        }
 
         // GET: CoreUsers
-        public async Task<IActionResult> Index()
+       [HttpGet("/CoreUsers/{id}", Name = "GetUser")]
+        public CoreUser Get(string id)
         {
-            return View(await _context.Users.ToListAsync());
+            return _tweeterRepo.FindUser(id);
         }
 
-        // GET: CoreUsers/Details/5
-        public async Task<IActionResult> Details(string id)
+        [HttpGet("/CoreUsers/get/{id}")]
+        public CoreTweet Get2(int id)
         {
-            if (id == null)
+            return _tweeterRepo.FindTweet(id);
+        }
+
+
+
+        // POST book
+        [HttpPost("/CoreUsers/register")]
+        public IActionResult Register([FromBody]CoreUser user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            CoreUser createdUser = _tweeterRepo.Register(user);
+
+
+            return CreatedAtRoute("GetUser", new { id = user.Username } , createdUser);
+        }
+
+        // POST book
+        [HttpPost("/CoreUsers/Tweet")]
+        public IActionResult Tweet([FromBody]TweetModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+            if (_tweeterRepo.FindUser(model.Username).Equals(null))
+                return BadRequest();
+
+
+
+            if (model.Message.Length > 140)
+                return BadRequest();
+
+            CoreTweet newTweet = _tweeterRepo.addTweet(model);
+
+
+            return CreatedAtRoute("GetTweet", new { id = model.Username }, newTweet);
+        }
+
+
+
+
+        // PUT book/5
+        [HttpPut("/CoreUsers/Update")]
+        public IActionResult Put([FromBody]TweetModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+            if (model.Message.Length > 140)
+                return BadRequest();
+
+            _tweeterRepo.Edit(model);
+
+            CoreTweet newTweet = _tweeterRepo.FindTweet(model.ID);
+
+            return CreatedAtRoute("GetTweet", new { id = model.Username }, newTweet);
+
+
+        }
+
+
+        // DELETE book/5
+        [HttpDelete("/CoreUsers/Delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            var book = _tweeterRepo.FindTweet(id);
+            if (book == null)
             {
                 return NotFound();
             }
+            _tweeterRepo.RemoveTweet(id);
 
-            var coreUser = await _context.Users
-                .SingleOrDefaultAsync(m => m.Username == id);
-            if (coreUser == null)
-            {
-                return NotFound();
-            }
 
-            return View(coreUser);
-        }
-
-        // GET: CoreUsers/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CoreUsers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username")] CoreUser coreUser)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(coreUser);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(coreUser);
-        }
-
-        // GET: CoreUsers/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var coreUser = await _context.Users.SingleOrDefaultAsync(m => m.Username == id);
-            if (coreUser == null)
-            {
-                return NotFound();
-            }
-            return View(coreUser);
-        }
-
-        // POST: CoreUsers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Username")] CoreUser coreUser)
-        {
-            if (id != coreUser.Username)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(coreUser);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CoreUserExists(coreUser.Username))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return View(coreUser);
-        }
-
-        // GET: CoreUsers/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var coreUser = await _context.Users
-                .SingleOrDefaultAsync(m => m.Username == id);
-            if (coreUser == null)
-            {
-                return NotFound();
-            }
-
-            return View(coreUser);
-        }
-
-        // POST: CoreUsers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var coreUser = await _context.Users.SingleOrDefaultAsync(m => m.Username == id);
-            _context.Users.Remove(coreUser);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        private bool CoreUserExists(string id)
-        {
-            return _context.Users.Any(e => e.Username == id);
+            return NoContent();
         }
     }
 }

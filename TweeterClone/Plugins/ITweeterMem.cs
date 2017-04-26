@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TweeterClone.App.Entities;
+using TweeterClone.App.Models;
 
 namespace TweeterClone.Plugin
 {
     public interface ITweeterMem
     {
-        CoreUser Register(String username, String password, String email);
-        IEnumerable<CoreTweet> getAllTweets(String username);
-        CoreTweet Find(int id);
-        void Remove(int id);
-        CoreTweet Edit(int id, String message);
+        CoreUser Register(CoreUser user);
+        CoreTweet addTweet(TweetModel tweet);
+        IEnumerable<CoreTweet> getAllTweets();
+        CoreTweet FindTweet(int id);
+        CoreUser FindUser(string username);
+        void RemoveTweet(int id);
+        CoreTweet Edit(TweetModel model);
 
     }
 }

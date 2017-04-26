@@ -33,8 +33,11 @@ namespace TweeterClone
             // Add framework services.
             //  services.AddDbContext<TweeterContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<TweeterContext>(opt => opt.UseInMemoryDatabase());
+            services.AddTransient<ITweeterMem, ContextInMem>();
 
             services.AddMvc();
+
+            services.AddSwaggerGen();
 
           //  services.AddScoped<ITweeterMem, TweeterMem>();
 
@@ -47,10 +50,15 @@ namespace TweeterClone
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute("default", "{controller=CoreUser}/{action=Index}/{id?}");
-            });
+            app.UseMvc(
+                routes =>
+                {
+                    routes.MapRoute("Default", "{controller=CoreUsers}/{action=getAll}/{id?}");
+
+                });
+
+            app.UseSwagger();
+            app.UseSwaggerUi();
 
           //  Dbinitializer.Initialize(context);
         }
